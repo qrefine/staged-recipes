@@ -2,14 +2,6 @@
 
 export PACKAGES=`python -c 'import site; print(site.getsitepackages()[0])'`
 
-echo "####################################"
-echo "#### QREFINE INSTALLER FOR CONDA ###"
-echo "####################################"
-echo ""
-echo "python modules location: $PACKAGES"
-
-
-
 ### restraint libs
 echo "Downloading restraints libraries"
 cd $PACKAGES
@@ -37,7 +29,7 @@ echo "Downloading probe"
 svn --quiet --non-interactive --trust-server-cert co https://github.com/rlabduke/probe.git/trunk probe
 cd probe
 make
-cp hybrid_36_c.c $PACKAGES/iotbx/pdb/hybrid_36_c.c
+cp hybrid_36_c.c $PACKAGES/iotbx/pdb/.
 cd ..
 
 ### REDUCE
@@ -61,5 +53,12 @@ libtbx.configure probe qrefine reduce
 mmtbx.rebuild_rotarama_cache
 mmtbx.rebuild_cablam_cache
 
-echo "run:"
-echo "   source $PACKAGES/build/setpaths.sh"
+# Copy the [de]activate scripts to $PREFIX/etc/conda/[de]activate.d.
+# This will allow them to be run on environment activation.
+for CHANGE in "activate" "deactivate"
+do
+    mkdir -p "${PREFIX}/etc/conda/${CHANGE}.d"
+    cp "${RECIPE_DIR}/activator/${CHANGE}.sh" "${PREFIX}/etc/conda/${CHANGE}.d/${PKG_NAME}_${CHANGE}.sh"
+done
+
+
