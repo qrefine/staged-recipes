@@ -36,6 +36,9 @@ cd ..
 echo "Downloading reduce"
 svn --quiet --non-interactive --trust-server-cert co https://github.com/rlabduke/reduce.git/trunk reduce
 cd reduce
+sed -i /"g++"/d reduce_src/Makefile
+sed -i /"g++"/d libpdb/Makefile
+sed -i /"g++"/d toolclasses/Makefile
 make
 cd ..
 
